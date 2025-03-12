@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Button from "@/components/Button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -25,7 +26,9 @@ export default function Home() {
             <option>Postgres</option>
           </select>
         </div>
-        <Button text="Conectar" />
+        <Link href={"/queries"} className="btn-primary">
+          Conectar
+        </Link>
       </div>
       <div></div>
     </div>
