@@ -23,7 +23,7 @@ export default function ModelCustomization() {
         <h2>Qual a key da LLM ?</h2>
         <input type="password" />
       </div>
-
+      <div className="grow"></div>
       <Link href={"#"} className="btn-primary w-1/12">
         Continuar
       </Link>
