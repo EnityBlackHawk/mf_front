@@ -49,6 +49,10 @@
     @apply appearance-none h-6 w-6 border-2 border-onBackground rounded-sm checked:bg-ascent checked:border-ascent focus:outline-none transition-all duration-300 relative;
   }
 
+  select {
+    @apply p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-colors;
+  }
+
   input[type="checkbox"]::after {
     content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>');
     display: block;

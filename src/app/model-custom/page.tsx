@@ -21,7 +21,6 @@ export default function ModelCustomization() {
         <h2>Qual framework você utiliza ?</h2>
         <select
           defaultValue={"Spring Data MongoDB"}
-          className="p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-colors"
         >
           <option>Spring Data MongoDB</option>
         </select>
@@ -32,7 +31,7 @@ export default function ModelCustomization() {
         <textarea className="main-input grow" />
       </div>
 
-      <Link href={"#"} className="btn-primary w-1/12">
+      <Link href={"/llm-config"} className="btn-primary w-1/12">
         Continuar
       </Link>
     </div>
