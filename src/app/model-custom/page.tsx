@@ -19,8 +19,11 @@ export default function ModelCustomization() {
 
       <div className="flex flex-col gap-2">
         <h2>Qual framework você utiliza ?</h2>
-        <select className="p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-colors">
-          <option selected>Spring Data MongoDB</option>
+        <select
+          defaultValue={"Spring Data MongoDB"}
+          className="p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-colors"
+        >
+          <option>Spring Data MongoDB</option>
         </select>
       </div>
 
