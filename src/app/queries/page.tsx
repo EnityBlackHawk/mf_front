@@ -1,6 +1,7 @@
 "use client";
 import Button from "@/components/Button";
 import QueryItem from "@/components/QueryItem";
+import Link from "next/link";
 import { useState } from "react";
 
 type Query = {
@@ -26,7 +27,7 @@ export default function Queries() {
   }
 
   return (
-    <div className="grid grid-rows-[auto_auto_auto_1fr] col-1 container gap-5 h-full py-10">
+    <div className="grid grid-rows-[auto_auto_auto_1fr_auto] col-1 container gap-5 h-full py-10">
       <h1 className="font-bold text-4xl">
         Quais as consultas são as mais utilizadas ?
       </h1>
@@ -68,6 +69,10 @@ export default function Queries() {
           );
         })}
       </div>
+
+      <Link href={"/model-custom"} className="btn-primary w-1/12">
+        Continuar
+      </Link>
     </div>
   );
 }

@@ -25,11 +25,45 @@
 @layer components {
   button,
   .btn-primary {
-    @apply py-3 px-7 bg-onBackground hover:bg-ascent hover:text-black rounded transition-all duration-300;
+    @apply py-3 px-7 bg-onBackground hover:bg-ascent hover:text-black rounded transition-all duration-300 hover:cursor-pointer;
   }
 
+  .btn-secondary {
+    @apply py-3 px-7 bg-transparent border-2 border-onBackground hover:bg-transparent hover:border-ascent hover:text-white rounded transition-all duration-300;
+  }
+
+  .main-input,
   input {
     @apply p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-colors;
+  }
+
+  h1 {
+    @apply font-bold text-4xl;
+  }
+
+  h2 {
+    @apply font-bold text-xl;
+  }
+
+  input[type="checkbox"] {
+    @apply appearance-none h-6 w-6 border-2 border-onBackground rounded-sm checked:bg-ascent checked:border-ascent focus:outline-none transition-all duration-300 relative;
+  }
+
+  input[type="checkbox"]::after {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>');
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  input[type="checkbox"]:checked::after {
+    opacity: 1;
   }
 }
 
