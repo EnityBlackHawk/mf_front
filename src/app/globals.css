@@ -45,6 +45,10 @@
     @apply font-bold text-xl;
   }
 
+  h3 {
+    @apply font-bold text-[1.10rem];
+  }
+
   input[type="checkbox"] {
     @apply appearance-none h-6 w-6 border-2 border-onBackground rounded-sm checked:bg-ascent checked:border-ascent focus:outline-none transition-all duration-300 relative;
   }
