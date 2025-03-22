@@ -24,7 +24,7 @@ export default function ModelCustomization() {
         <input type="password" />
       </div>
       <div className="grow"></div>
-      <Link href={"#"} className="btn-primary w-1/12">
+      <Link href={"/relationships"} className="btn-primary w-1/12">
         Continuar
       </Link>
     </div>
