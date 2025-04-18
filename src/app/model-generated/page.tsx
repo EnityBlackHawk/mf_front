@@ -16,9 +16,14 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import DocumentNode from "@/components/Nodes/DocumentNode";
+import CustomEdge from "@/components/Edges/CustomEdge";
 
 const nodeTypes = {
   documentType: DocumentNode,
+};
+
+const edgeTypes = {
+  customEdge: CustomEdge,
 };
 
 const initialNodes = [
@@ -44,9 +49,9 @@ const initialNodes = [
         {
           name: "aircrafts",
           isReference: false,
-          isRelationship : true,
-          type: "Array<Aircraft>"
-        }
+          isRelationship: true,
+          type: "Array<Aircraft>",
+        },
       ],
     },
   },
@@ -58,7 +63,15 @@ const initialNodes = [
   },
 ];
 const initialEdges = [
-  { id: "e1-2", source: "1", sourceHandle: "0", target: "2" },
+  {
+    id: "e1-2",
+    source: "1",
+    sourceHandle: "0",
+    type: "customEdge",
+    target: "2",
+    animated: false,
+    style: { stroke: "#FF0000" },
+  },
 ];
 
 export default function ModelGenerated() {
@@ -72,14 +85,18 @@ export default function ModelGenerated() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) =>
+      setEdges((eds) => {
+        params.type = "customEdge";
+        return addEdge(params, eds);
+      }),
     [setEdges]
   );
 
   return (
     <>
       {isLoading && (
-        <div className="flex flex-col items-center content-center gap-5 ">
+        <div className="flex flex-col items-center content-center gap-5">
           <Loading text="Gerando o modelo..." />
         </div>
       )}
@@ -93,8 +110,10 @@ export default function ModelGenerated() {
             colorMode="dark"
             nodes={nodes}
             edges={edges}
+            edgeTypes={edgeTypes}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
           >
             <Background bgColor="#001011" variant="dots" gap={12} size={1} />
           </ReactFlow>
@@ -104,7 +123,13 @@ export default function ModelGenerated() {
               Continuar
             </Link>
 
-            <Button text="Gerar novamente" className="btn-secondary" />
+            <Button
+              text="Gerar novamente"
+              className="btn-secondary"
+              onClick={() => {
+                console.log(edges);
+              }}
+            />
           </div>
         </div>
       )}

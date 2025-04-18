@@ -22,8 +22,8 @@ export default function DocumentNode({ data }: { data: DocType }) {
 
         {data.props.map((x, index) => {
           return (
-            <div key={index} className="relative">
-              <label className="label">
+            <div key={index} className="relative py-1 px-2">
+              <label className="label font-bold text-[1.2rem]">
                 {x.name} : <span className="font-serif">{x.type}</span>
               </label>
               {x.isRelationship && labelPositions[index] !== undefined && (
