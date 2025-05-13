@@ -5,6 +5,7 @@
   --foreground: #ffffff;
   --ascent: #63b995;
   --onBackground: #2b4f40;
+  --warning: #ffee02;
 }
 
 ::selection {
@@ -17,11 +18,13 @@
   --color-foreground: var(--foreground);
   --color-onBackground: var(--onBackground);
   --color-ascent: var(--ascent);
+  --color-warning: var(--warning);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
   --drop-shadow-glow: 0 0 8px var(--ascent);
+  --drop-shadow-warning-glow: 0 0 8px var(--warning);
 }
 
 @layer components {

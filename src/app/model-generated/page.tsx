@@ -97,7 +97,8 @@ export default function ModelGenerated() {
     <>
       {isLoading && (
         <div className="flex flex-col items-center content-center gap-5">
-          <Loading text="Gerando o modelo..." />
+          <h1 className="text-ascent animate-pulse">Gerando modelo</h1>
+          <Loading className="w-36 h-36" />
         </div>
       )}
 
@@ -119,7 +120,7 @@ export default function ModelGenerated() {
           </ReactFlow>
 
           <div className="flex flex-row gap-5">
-            <Link href={"/llm-config"} className="btn-primary w-1/12">
+            <Link href={"/code-generated"} className="btn-primary w-1/12">
               Continuar
             </Link>
 
