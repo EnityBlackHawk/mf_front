@@ -7,6 +7,7 @@ export default function Migration() {
 
       <div className="flex align-middle gap-4">
         <input className="drop-shadow-glow" type="checkbox" checked disabled />
+        <p></p>
         <h2>Compilando classes</h2>
       </div>
 
