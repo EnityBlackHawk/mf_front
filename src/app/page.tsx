@@ -7,6 +7,8 @@ import { TryConnectRdb } from "@/services/MfApiServices";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ErrorCard from "@/components/ErrorCard";
+import { useTransitionRouter } from "next-view-transitions";
+import pageAnimation from "@/services/NavAnimationDef";
 
 const initialState = {
   message: "",
@@ -32,7 +34,7 @@ function Submit() {
 }
 
 export default function Home() {
-  const router = useRouter();
+  const router = useTransitionRouter();
 
   const navAfterSend = async (
     prevState: { message: boolean },
@@ -40,7 +42,9 @@ export default function Home() {
   ) => {
     const res = await send(prevState, formData);
     if (res.message) {
-      router.replace("/queries");
+      router.replace("/queries", {
+        onTransitionReady: pageAnimation,
+      });
     } else {
       setHasError(true);
     }
