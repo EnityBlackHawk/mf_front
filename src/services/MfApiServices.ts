@@ -7,3 +7,7 @@ export async function TryConnectRdb(rdbAccess: obj.RdbAccess) {
     rdbAccess
   );
 }
+
+export async function Setup(setup: obj.Setup) {
+  return await axios.post("http://localhost:8080/api/setup", setup);
+}

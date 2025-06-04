@@ -1,8 +1,13 @@
 "use client";
 import Button from "@/components/Button";
+import { useGlobalState } from "@/components/GlobalState";
+import Loading from "@/components/Loading";
 import QueryItem from "@/components/QueryItem";
+import pageAnimation from "@/services/NavAnimationDef";
+import { useTransitionRouter } from "next-view-transitions";
 import Link from "next/link";
-import { useState } from "react";
+import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 
 type Query = {
   id: number;
@@ -10,11 +15,32 @@ type Query = {
   regularity: number;
 };
 
+function Submit() {
+  const { pending } = useFormStatus();
+  return (
+    <button type="submit" className="btn-primary flex" disabled={pending}>
+      {pending ? <Loading className="w-6 h-6" /> : "Conectar"}
+    </button>
+  );
+}
+
 export default function Queries() {
+  const navAfterSend = async (prevState: null, formData: FormData) => {
+    globalQueries.push(...queries);
+    router.replace("/model-custom");
+
+    return null;
+  };
+
+  const { queries: globalQueries } = useGlobalState();
   const [idCount, setIdCount] = useState<number>(0);
   const [queries, setQueries] = useState<Array<Query>>([]);
   const [query, setQuery] = useState<string>("");
   const [regularity, setRegularity] = useState<number>(0);
+
+  const router = useTransitionRouter();
+
+  const [state, formAction] = useActionState(navAfterSend, null);
 
   function addQuery() {
     if (!query || !regularity) {
@@ -27,15 +53,19 @@ export default function Queries() {
   }
 
   return (
-    <div className="grid grid-rows-[auto_auto_auto_1fr_auto] col-1 container gap-5 h-full py-10">
+    <form
+      className="grid grid-rows-[auto_auto_auto_1fr_auto] col-1 container gap-5 h-full py-10"
+      action={formAction}
+    >
       <h1 className="font-bold text-4xl">
         Quais as consultas são as mais utilizadas ?
       </h1>
 
       <div className="flex items-end gap-4">
         <div className="grid grow">
-          <label>Consulta (SQL):</label>
+          <label htmlFor="query">Consulta (SQL):</label>
           <input
+            id="query"
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -43,8 +73,9 @@ export default function Queries() {
           />
         </div>
         <div className="grid">
-          <label>Regularidade (%):</label>
+          <label htmlFor="regularity">Regularidade (%):</label>
           <input
+            id="regularity"
             value={regularity}
             type="number"
             onChange={(event) => setRegularity(Number(event.target.value))}
@@ -61,18 +92,13 @@ export default function Queries() {
               query={x.query}
               regularity={x.regularity}
               onDelete={() => {
-                console.log(x.id);
-                console.log(queries);
                 setQueries(queries.filter((y) => y.id != x.id));
               }}
             />
           );
         })}
       </div>
-
-      <Link href={"/model-custom"} className="btn-primary w-1/12">
-        Continuar
-      </Link>
-    </div>
+      <Submit />
+    </form>
   );
 }

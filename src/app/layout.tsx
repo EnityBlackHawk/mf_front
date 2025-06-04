@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { ViewTransitions } from "next-view-transitions";
+import { GlobalStateProvider } from "@/components/GlobalState";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +31,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased flex justify-center items-center h-screen`}
         >
-          {children}
+          <GlobalStateProvider>{children}</GlobalStateProvider>
         </body>
       </html>
     </ViewTransitions>

@@ -1,4 +1,7 @@
+"use client";
+import { useGlobalState } from "@/components/GlobalState";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function ModelCustomization() {
   return (
@@ -19,9 +22,7 @@ export default function ModelCustomization() {
 
       <div className="flex flex-col gap-2">
         <h2>Qual framework você utiliza ?</h2>
-        <select
-          defaultValue={"Spring Data MongoDB"}
-        >
+        <select defaultValue={"Spring Data MongoDB"}>
           <option>Spring Data MongoDB</option>
         </select>
       </div>
