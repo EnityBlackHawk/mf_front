@@ -1,6 +1,10 @@
 "use client";
 
 import React, { createContext, useContext, useState } from "react";
+import {
+  MigrationPreferences,
+  DefaultMigrationPreferences,
+} from "@/services/MfApiObjects";
 
 type Query = {
   id: number;
@@ -10,10 +14,14 @@ type Query = {
 
 type GlobalStateContextType = {
   queries: Array<Query>;
+  preferences: MigrationPreferences;
+  setPreferences: React.Dispatch<React.SetStateAction<MigrationPreferences>>;
 };
 
 const GlobalStateContext = createContext<GlobalStateContextType>({
   queries: [],
+  preferences: DefaultMigrationPreferences,
+  setPreferences: () => {},
 });
 
 export function GlobalStateProvider({
@@ -21,8 +29,14 @@ export function GlobalStateProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const [preferences, setPreferences] = useState<MigrationPreferences>(
+    DefaultMigrationPreferences
+  );
+
   return (
-    <GlobalStateContext.Provider value={{ queries: [] }}>
+    <GlobalStateContext.Provider
+      value={{ queries: [], preferences, setPreferences }}
+    >
       {children}
     </GlobalStateContext.Provider>
   );

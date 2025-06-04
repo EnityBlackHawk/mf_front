@@ -12,6 +12,12 @@ export type MigrationPreferences = {
   framework: String;
   customPrompt: String;
 };
+export const DefaultMigrationPreferences = {
+  allowRef: true,
+  preferPerformance: true,
+  framework: "spring data mongodb",
+  customPrompt: "",
+};
 
 export type LLM = {
   provider: String;
