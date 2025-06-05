@@ -4,6 +4,10 @@ import React, { createContext, useContext, useState } from "react";
 import {
   MigrationPreferences,
   DefaultMigrationPreferences,
+  LLM,
+  DefaultLLM,
+  RdbAccess,
+  DefaultRdbAccess,
 } from "@/services/MfApiObjects";
 
 type Query = {
@@ -16,12 +20,20 @@ type GlobalStateContextType = {
   queries: Array<Query>;
   preferences: MigrationPreferences;
   setPreferences: React.Dispatch<React.SetStateAction<MigrationPreferences>>;
+  llmConfig: LLM;
+  setLlmConfig: React.Dispatch<React.SetStateAction<LLM>>;
+  rdb: RdbAccess;
+  setRdb: React.Dispatch<React.SetStateAction<RdbAccess>>;
 };
 
 const GlobalStateContext = createContext<GlobalStateContextType>({
   queries: [],
   preferences: DefaultMigrationPreferences,
   setPreferences: () => {},
+  llmConfig: DefaultLLM,
+  setLlmConfig: () => {},
+  rdb: DefaultRdbAccess,
+  setRdb: () => {},
 });
 
 export function GlobalStateProvider({
@@ -33,9 +45,20 @@ export function GlobalStateProvider({
     DefaultMigrationPreferences
   );
 
+  const [llmConfig, setLlmConfig] = useState<LLM>(DefaultLLM);
+  const [rdb, setRdb] = useState<RdbAccess>(DefaultRdbAccess);
+
   return (
     <GlobalStateContext.Provider
-      value={{ queries: [], preferences, setPreferences }}
+      value={{
+        queries: [],
+        preferences,
+        setPreferences,
+        llmConfig,
+        setLlmConfig,
+        rdb,
+        setRdb,
+      }}
     >
       {children}
     </GlobalStateContext.Provider>

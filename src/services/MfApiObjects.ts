@@ -1,16 +1,23 @@
 export type RdbAccess = {
   /* JDBC host */
-  host: String;
-  user: String;
-  password: String;
-  sgbd: String;
+  host: string;
+  user: string;
+  password: string;
+  sgbd: string;
+};
+
+export const DefaultRdbAccess = {
+  host: "",
+  user: "",
+  password: "",
+  sgbd: "Postgres",
 };
 
 export type MigrationPreferences = {
-  allowRef: Boolean;
-  preferPerformance: Boolean;
-  framework: String;
-  customPrompt: String;
+  allowRef: boolean;
+  preferPerformance: boolean;
+  framework: string;
+  customPrompt: string;
 };
 export const DefaultMigrationPreferences = {
   allowRef: true,
@@ -20,9 +27,14 @@ export const DefaultMigrationPreferences = {
 };
 
 export type LLM = {
-  provider: String;
-  model: String;
-  apiKey: String;
+  provider: string;
+  model: string;
+  apiKey: string;
+};
+export const DefaultLLM = {
+  provider: "GPT",
+  model: "gtp-4o",
+  apiKey: "",
 };
 
 export type Workload = {

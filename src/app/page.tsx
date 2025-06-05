@@ -9,6 +9,7 @@ import { useState } from "react";
 import ErrorCard from "@/components/ErrorCard";
 import { useTransitionRouter } from "next-view-transitions";
 import pageAnimation from "@/services/NavAnimationDef";
+import { useGlobalState } from "@/components/GlobalState";
 
 const initialState = {
   message: "",
@@ -16,9 +17,9 @@ const initialState = {
 
 async function send(prevState: { message: boolean }, formData: FormData) {
   const result = await TryConnectRdb({
-    host: formData.get("url") as String,
-    user: formData.get("username") as String,
-    password: formData.get("password") as String,
+    host: formData.get("url") as string,
+    user: formData.get("username") as string,
+    password: formData.get("password") as string,
     sgbd: "",
   });
   return { message: result.data };
@@ -47,13 +48,22 @@ export default function Home() {
       });
     } else {
       setHasError(true);
+      return res;
     }
+
+    setRdb({
+      host: formData.get("url") as string,
+      user: formData.get("username") as string,
+      password: formData.get("password") as string,
+      sgbd: "",
+    });
 
     return res;
   };
 
   const [state, formAction] = useFormState(navAfterSend, initialState);
   const [hasError, setHasError] = useState(false);
+  const { rdb, setRdb } = useGlobalState();
 
   return (
     <form action={formAction} className="grid col-1 container gap-10">

@@ -25,7 +25,9 @@ export default function ModelCustomization() {
       customPrompt: (formData.get("customPrompt") as String) || "",
     };
     setPreferences(pref);
-    console.log(preferences);
+
+    router.push("/llm-config");
+
     return null;
   };
 
@@ -42,27 +44,42 @@ export default function ModelCustomization() {
       <h1 className="font-bold text-4xl">Vamos customizar o seu modelo:</h1>
 
       <div className="flex gap-3">
-        <input name="allowRef" type="checkbox" />
+        <input
+          name="allowRef"
+          type="checkbox"
+          defaultChecked={preferences.allowRef}
+        />
         <p>
           Permitir que os documentos possuam referências a outros documentos
         </p>
       </div>
 
       <div className="flex gap-3">
-        <input name="preferPerformance" type="checkbox" />
+        <input
+          name="preferPerformance"
+          type="checkbox"
+          defaultChecked={preferences.preferPerformance}
+        />
         <p>Priorizar desempenho ao invés da consistência</p>
       </div>
 
       <div className="flex flex-col gap-2">
         <h2>Qual framework você utiliza ?</h2>
-        <select name="framework" defaultValue={"Spring Data MongoDB"}>
+        <select
+          name="framework"
+          defaultValue={preferences.framework ?? "Spring Data MongoDB"}
+        >
           <option>Spring Data MongoDB</option>
         </select>
       </div>
 
       <div className="flex flex-col gap-2 grow">
         <h2>Gostaria de adicionar alguma observação ?</h2>
-        <textarea name="customPrompt" className="main-input grow" />
+        <textarea
+          name="customPrompt"
+          className="main-input grow"
+          defaultValue={preferences.customPrompt}
+        />
       </div>
 
       <Submit />
