@@ -6,14 +6,39 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Button from "@/components/Button";
 import Link from "next/link";
+import { useGlobalState } from "@/components/GlobalState";
+import { sendSetup } from "./service";
+import ErrorCard from "@/components/ErrorCard";
+import { Relation } from "@/services/MfApiResponses";
 
 export default function Relationships() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const { llmConfig, queries, preferences, rdb } = useGlobalState();
+  const [relations, setRelations] = useState<Relation[]>([]);
+
+  const makeSetup = () => {
+    sendSetup({
+      llm: llmConfig,
+      workloads: queries.map((q) => {
+        return { query: q.query, regularity: q.regularity };
+      }),
+      preferences: preferences,
+      projectName: "ProjectFront",
+      rdbAccess: rdb,
+    }).then((resp) => {
+      if (resp.status != 200) {
+        setError(resp.message!!);
+      } else {
+        setRelations(resp.data!!);
+      }
+
+      setIsLoading(false);
+    });
+  };
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    makeSetup();
   }, []);
 
   return (
@@ -27,24 +52,28 @@ export default function Relationships() {
             <RelationshipItemSkeleton key={i} />
           ))}
 
-        {!isLoading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <RelationshipItem
-              table_a={"Oderlines"}
-              table_b={"Orders"}
-              avg={3}
-              min={1}
-              max={5}
-              relationship="Many-to-One"
-            />
-          </motion.div>
-        )}
+        {!isLoading &&
+          relations.map((r, i) => {
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <RelationshipItem
+                  table_a={r.source}
+                  table_b={r.target}
+                  avg={r.avg}
+                  min={r.min}
+                  max={r.max}
+                  relationship="Many-to-One"
+                />
+              </motion.div>
+            );
+          })}
       </div>
-      {!isLoading && (
+      {!isLoading && !error && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -55,6 +84,8 @@ export default function Relationships() {
           </Link>
         </motion.div>
       )}
+
+      {!isLoading && error && <ErrorCard message={error} />}
     </div>
   );
 }
