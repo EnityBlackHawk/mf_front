@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   MigrationPreferences,
   DefaultMigrationPreferences,
@@ -10,6 +10,7 @@ import {
   DefaultRdbAccess,
 } from "@/services/MfApiObjects";
 import { DefaultMetadataInfo, MetadataInfo } from "@/services/MfApiResponses";
+import { pre } from "framer-motion/client";
 
 type Query = {
   id: number;
@@ -17,55 +18,78 @@ type Query = {
   regularity: number;
 };
 
+type Setter<T> = (param: T) => void;
+
 type GlobalStateContextType = {
-  queries: Array<Query>;
+  queries: Query[];
+  setQueries: Setter<Query[]>;
   preferences: MigrationPreferences;
-  setPreferences: React.Dispatch<React.SetStateAction<MigrationPreferences>>;
+  setPreferences: Setter<MigrationPreferences>;
   llmConfig: LLM;
-  setLlmConfig: React.Dispatch<React.SetStateAction<LLM>>;
+  setLlmConfig: Setter<LLM>;
   rdb: RdbAccess;
-  setRdb: React.Dispatch<React.SetStateAction<RdbAccess>>;
+  setRdb: Setter<RdbAccess>;
   metadataInfo: MetadataInfo;
-  setMetadataInfo: React.Dispatch<React.SetStateAction<MetadataInfo>>;
+  setMetadataInfo: Setter<MetadataInfo>;
 };
 
-const GlobalStateContext = createContext<GlobalStateContextType>({
-  queries: [],
-  preferences: DefaultMigrationPreferences,
-  setPreferences: () => {},
-  llmConfig: DefaultLLM,
-  setLlmConfig: () => {},
-  rdb: DefaultRdbAccess,
-  setRdb: () => {},
-  metadataInfo: DefaultMetadataInfo,
-  setMetadataInfo: () => {},
-});
+const GlobalStateContext = createContext<GlobalStateContextType | undefined>(
+  undefined
+);
 
 export function GlobalStateProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [preferences, setPreferences] = useState<MigrationPreferences>(
-    DefaultMigrationPreferences
-  );
+  // Função para carregar o estado inicial do localStorage
+  const loadStateFromLocalStorage = () => {
+    const savedState = localStorage.getItem("globalState");
+    if (savedState) {
+      return JSON.parse(savedState);
+    }
+    return {
+      queries: [],
+      preferences: DefaultMigrationPreferences,
+      llmConfig: DefaultLLM,
+      rdb: DefaultRdbAccess,
+      metadataInfo: DefaultMetadataInfo,
+    };
+  };
 
-  const [llmConfig, setLlmConfig] = useState<LLM>(DefaultLLM);
-  const [rdb, setRdb] = useState<RdbAccess>(DefaultRdbAccess);
-  const [metadataInfo, setMetadataInfo] =
-    useState<MetadataInfo>(DefaultMetadataInfo);
+  // Estado inicial carregado do localStorage
+  const initialState = loadStateFromLocalStorage();
+
+  // Função para salvar o estado no localStorage
+  const saveStateToLocalStorage = (key: string, value: any) => {
+    const globalState = loadStateFromLocalStorage();
+    globalState[key] = value;
+    localStorage.setItem("globalState", JSON.stringify(globalState));
+  };
+
+  // Setters que atualizam diretamente o localStorage
+  const setQueries = (queries: Query[]) =>
+    saveStateToLocalStorage("queries", queries);
+  const setPreferences = (preferences: MigrationPreferences) =>
+    saveStateToLocalStorage("preferences", preferences);
+  const setLlmConfig = (llmConfig: LLM) =>
+    saveStateToLocalStorage("llmConfig", llmConfig);
+  const setRdb = (rdb: RdbAccess) => saveStateToLocalStorage("rdb", rdb);
+  const setMetadataInfo = (metadataInfo: MetadataInfo) =>
+    saveStateToLocalStorage("metadataInfo", metadataInfo);
 
   return (
     <GlobalStateContext.Provider
       value={{
-        queries: [],
-        preferences,
+        queries: initialState.queries,
+        setQueries,
+        preferences: initialState.preferences,
         setPreferences,
-        llmConfig,
+        llmConfig: initialState.llmConfig,
         setLlmConfig,
-        rdb,
+        rdb: initialState.rdb,
         setRdb,
-        metadataInfo,
+        metadataInfo: initialState.metadataInfo,
         setMetadataInfo,
       }}
     >

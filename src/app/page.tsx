@@ -43,7 +43,7 @@ export default function Home() {
   ) => {
     const res = await send(prevState, formData);
     if (res.message) {
-      router.replace("/queries", {
+      router.push("/queries", {
         onTransitionReady: pageAnimation,
       });
     } else {

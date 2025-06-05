@@ -27,7 +27,7 @@ function Submit() {
 export default function Queries() {
   const navAfterSend = async (prevState: null, formData: FormData) => {
     globalQueries.push(...queries);
-    router.replace("/model-custom");
+    router.push("/model-custom");
 
     return null;
   };
