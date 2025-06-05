@@ -9,6 +9,7 @@ import {
   RdbAccess,
   DefaultRdbAccess,
 } from "@/services/MfApiObjects";
+import { DefaultMetadataInfo, MetadataInfo } from "@/services/MfApiResponses";
 
 type Query = {
   id: number;
@@ -24,6 +25,8 @@ type GlobalStateContextType = {
   setLlmConfig: React.Dispatch<React.SetStateAction<LLM>>;
   rdb: RdbAccess;
   setRdb: React.Dispatch<React.SetStateAction<RdbAccess>>;
+  metadataInfo: MetadataInfo;
+  setMetadataInfo: React.Dispatch<React.SetStateAction<MetadataInfo>>;
 };
 
 const GlobalStateContext = createContext<GlobalStateContextType>({
@@ -34,6 +37,8 @@ const GlobalStateContext = createContext<GlobalStateContextType>({
   setLlmConfig: () => {},
   rdb: DefaultRdbAccess,
   setRdb: () => {},
+  metadataInfo: DefaultMetadataInfo,
+  setMetadataInfo: () => {},
 });
 
 export function GlobalStateProvider({
@@ -47,6 +52,8 @@ export function GlobalStateProvider({
 
   const [llmConfig, setLlmConfig] = useState<LLM>(DefaultLLM);
   const [rdb, setRdb] = useState<RdbAccess>(DefaultRdbAccess);
+  const [metadataInfo, setMetadataInfo] =
+    useState<MetadataInfo>(DefaultMetadataInfo);
 
   return (
     <GlobalStateContext.Provider
@@ -58,6 +65,8 @@ export function GlobalStateProvider({
         setLlmConfig,
         rdb,
         setRdb,
+        metadataInfo,
+        setMetadataInfo,
       }}
     >
       {children}

@@ -10,12 +10,15 @@ import { useGlobalState } from "@/components/GlobalState";
 import { sendSetup } from "./service";
 import ErrorCard from "@/components/ErrorCard";
 import { Relation } from "@/services/MfApiResponses";
+import { useTransitionRouter } from "next-view-transitions";
 
 export default function Relationships() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { llmConfig, queries, preferences, rdb } = useGlobalState();
+  const { llmConfig, queries, preferences, rdb, setMetadataInfo } =
+    useGlobalState();
   const [relations, setRelations] = useState<Relation[]>([]);
+  const router = useTransitionRouter();
 
   const makeSetup = () => {
     sendSetup({
@@ -30,7 +33,8 @@ export default function Relationships() {
       if (resp.status != 200) {
         setError(resp.message!!);
       } else {
-        setRelations(resp.data!!);
+        setMetadataInfo(resp.data!!);
+        setRelations(resp.data?.relations!!);
       }
 
       setIsLoading(false);
@@ -79,9 +83,13 @@ export default function Relationships() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Link className="btn-primary" href={"/model-generated"}>
-            Continuar
-          </Link>
+          <Button
+            text="Continuar"
+            className="btn-primary"
+            onClick={() => {
+              router.push("/model-generated");
+            }}
+          />
         </motion.div>
       )}
 
