@@ -17,7 +17,10 @@ export default function DocumentNode({ data }: { data: DocType }) {
 
   return (
     <>
-      <div className="min-w-45 bg-background border-2 border-onBackground rounded flex flex-col px-4 py-4">
+      <div
+        id={`node-${data.name}`}
+        className="min-w-45 bg-background border-2 border-onBackground rounded flex flex-col px-4 py-4"
+      >
         <h2 className="mb-2">{data.name}</h2>
 
         {data.props.map((x, index) => {

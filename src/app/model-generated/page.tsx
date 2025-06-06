@@ -3,7 +3,7 @@
 import Button from "@/components/Button";
 import Loading from "@/components/Loading";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import React from "react";
 import {
   ReactFlow,
@@ -20,6 +20,7 @@ import DocumentNode from "@/components/Nodes/DocumentNode";
 import CustomEdge from "@/components/Edges/CustomEdge";
 import { mapModelDtoToNodes, sendGenerateModel } from "./service";
 import { useGlobalState } from "@/components/GlobalState";
+import Dagre from "@dagrejs/dagre";
 
 const nodeTypes = {
   documentType: DocumentNode,
@@ -77,6 +78,51 @@ const initialEdges = [
   },
 ];
 
+const getLayoutedElements = (nodes, edges, options) => {
+  const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
+  g.setGraph({ rankdir: options.direction });
+
+  edges.forEach((edge) => g.setEdge(edge.source, edge.target));
+  nodes.forEach((node) =>
+    g.setNode(node.id, {
+      ...node,
+      width: node.measured?.width ?? 150,
+      height: node.measured?.height ?? 100,
+    })
+  );
+
+  Dagre.layout(g);
+
+  return {
+    nodes: nodes.map((node) => {
+      const position = g.node(node.id);
+      // We are shifting the dagre node position (anchor=center center) to the top left
+      // so it matches the React Flow node anchor point (top left).
+      const x = position.x - (node.measured?.width ?? 0) / 2;
+      const y = position.y - (node.measured?.height ?? 0) / 2;
+
+      return { ...node, position: { x, y } };
+    }),
+    edges,
+  };
+};
+
+const measureNodes = (nodes) => {
+  const measuredNodes = nodes.map((node) => {
+    const element = document.querySelector(`[data-id="${node}"]`);
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      return {
+        ...node,
+        width: rect.width,
+        height: rect.height,
+      };
+    }
+    return node;
+  });
+  return measuredNodes;
+};
+
 export default function ModelGenerated() {
   const [isLoading, setLoading] = useState<boolean>(true);
   const { metadataInfo } = useGlobalState();
@@ -91,8 +137,8 @@ export default function ModelGenerated() {
       const { nodes: inputNodes, edges: inputEdges } = mapModelDtoToNodes(
         resp.data!!
       );
+
       setNodes(inputNodes);
-      console.log("inputEdges:", inputEdges);
       setEdges(inputEdges);
       setLoading(false);
     });
@@ -105,6 +151,13 @@ export default function ModelGenerated() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  const layout = useCallback(() => {
+    const layouted = getLayoutedElements(nodes, edges, {
+      direction: "LR",
+    });
+    setNodes([...layouted.nodes]);
+  }, [nodes, edges]);
+
   const onConnect = useCallback(
     (params) =>
       setEdges((eds) => {
@@ -113,6 +166,10 @@ export default function ModelGenerated() {
       }),
     [setEdges]
   );
+
+  useEffect(() => {
+    layout();
+  }, [isLoading]);
 
   return (
     <>
@@ -136,9 +193,7 @@ export default function ModelGenerated() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-          >
-            
-          </ReactFlow>
+          ></ReactFlow>
 
           <div className="flex flex-row gap-5">
             <Link href={"/code-generated"} className="btn-primary w-1/12">
@@ -148,9 +203,7 @@ export default function ModelGenerated() {
             <Button
               text="Gerar novamente"
               className="btn-secondary"
-              onClick={() => {
-                console.log(edges);
-              }}
+              onClick={layout}
             />
           </div>
         </div>
