@@ -31,7 +31,7 @@ export default function DocumentNode({ data }: { data: DocType }) {
                   type="source"
                   position={Position.Right}
                   style={{ top: labelPositions[index] }}
-                  id={"0"}
+                  id={index.toString()}
                   isConnectable={true}
                 />
               )}

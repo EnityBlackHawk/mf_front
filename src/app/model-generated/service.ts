@@ -8,6 +8,7 @@ export type Prop = {
   type: string;
   referenceTo?: string;
   parent: string;
+  inParentIndex: number;
 };
 
 export type Node = {
@@ -24,7 +25,7 @@ export type Edge = {
   id: string;
   source: string;
   sourceHandle: string;
-  type: "customEdge";
+  type?: "customEdge";
   target: string;
   animated: boolean;
   style: { stroke: string };
@@ -44,12 +45,12 @@ export function mapModelDtoToNodes(model: ModelDto): {
 } {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
-  const refProps: Prop[] = [];
+  let refProps: Prop[] = [];
 
   for (let i = 0; i < model.models.length; i++) {
     const collection = model.models[i];
     const props: Prop[] = [];
-
+    let propCount = 0;
     for (const propName in collection.properties) {
       const spec = collection.properties[propName];
       let prop: Prop = {
@@ -58,20 +59,21 @@ export function mapModelDtoToNodes(model: ModelDto): {
         isRelationship: spec.relationshipType !== "none",
         type: spec.type ?? "unknown",
         referenceTo: spec.referenceTo?.targetTable,
-        parent: collection.title!!,
+        parent: collection.title!!.toLowerCase(),
+        inParentIndex: propCount,
       };
+      propCount++;
       props.push(prop);
     }
 
-    refProps.concat(
-      props.filter((x) => {
-        return x.isRelationship;
-      })
-    );
+    const fil = props.filter((x) => {
+      return x.isRelationship;
+    });
+    refProps = refProps.concat(fil);
 
     const spreadFactor = 250; // Adjust this value to control the spacing between nodes
     let node: Node = {
-      id: collection.title!!,
+      id: collection.title!!.toLowerCase(),
       position: { x: i * spreadFactor, y: 0 },
       type: "documentType",
       data: {
@@ -87,12 +89,12 @@ export function mapModelDtoToNodes(model: ModelDto): {
     const prop = refProps[i];
     const edge: Edge = {
       id: i.toString(),
-      animated: true,
+      animated: prop.isReference,
       source: prop.parent,
-      sourceHandle: "0",
-      style: { stroke: "#FF0000" },
+      sourceHandle: prop.inParentIndex.toString(),
+      style: { stroke: "#2b4f40" },
       target: prop.referenceTo!!,
-      type: "customEdge",
+      //type: "customEdge",
     };
 
     edges.push(edge);

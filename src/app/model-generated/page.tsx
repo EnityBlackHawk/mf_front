@@ -13,6 +13,7 @@ import {
   useNodesState,
   useEdgesState,
   addEdge,
+  BackgroundVariant,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import DocumentNode from "@/components/Nodes/DocumentNode";
@@ -136,7 +137,7 @@ export default function ModelGenerated() {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
           >
-            <Background bgColor="#001011" variant="dots" gap={12} size={1} />
+            
           </ReactFlow>
 
           <div className="flex flex-row gap-5">
