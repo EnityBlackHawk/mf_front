@@ -17,6 +17,8 @@ import {
 import "@xyflow/react/dist/style.css";
 import DocumentNode from "@/components/Nodes/DocumentNode";
 import CustomEdge from "@/components/Edges/CustomEdge";
+import { mapModelDtoToNodes, sendGenerateModel } from "./service";
+import { useGlobalState } from "@/components/GlobalState";
 
 const nodeTypes = {
   documentType: DocumentNode,
@@ -76,9 +78,27 @@ const initialEdges = [
 
 export default function ModelGenerated() {
   const [isLoading, setLoading] = useState<boolean>(true);
+  const { metadataInfo } = useGlobalState();
+
+  const makeGenerateModel = () => {
+    sendGenerateModel(metadataInfo).then((resp) => {
+      if (resp.status !== 200) {
+        alert("ERRO");
+        return;
+      }
+
+      const { nodes: inputNodes, edges: inputEdges } = mapModelDtoToNodes(
+        resp.data!!
+      );
+      setNodes(inputNodes);
+      console.log("inputEdges:", inputEdges);
+      setEdges(inputEdges);
+      setLoading(false);
+    });
+  };
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 3000);
+    makeGenerateModel();
   }, []);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);

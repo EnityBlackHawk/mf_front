@@ -21,8 +21,8 @@ export default function ModelCustomization() {
     const pref: MigrationPreferences = {
       allowRef: formData.get("allowRef") === "on",
       preferPerformance: formData.get("preferPerformance") === "on",
-      framework: (formData.get("framework") as String) || "Spring Data MongoDB",
-      customPrompt: (formData.get("customPrompt") as String) || "",
+      framework: (formData.get("framework") as string) || "Spring Data MongoDB",
+      customPrompt: (formData.get("customPrompt") as string) || "",
     };
     setPreferences(pref);
 
