@@ -1,4 +1,5 @@
 export type DocType = {
+  id: number;
   name: String;
   props: Array<PropType>;
 };

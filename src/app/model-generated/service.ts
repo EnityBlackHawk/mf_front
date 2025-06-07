@@ -16,6 +16,7 @@ export type Node = {
   type: "documentType";
   position: { x: number; y: number };
   data: {
+    id: number;
     name: string;
     props: Prop[];
   };
@@ -77,6 +78,7 @@ export function mapModelDtoToNodes(model: ModelDto): {
       position: { x: i * spreadFactor, y: 0 },
       type: "documentType",
       data: {
+        id: i,
         name: collection.title!!,
         props: props,
       },

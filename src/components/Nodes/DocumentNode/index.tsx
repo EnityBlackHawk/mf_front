@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { Handle, Position } from "@xyflow/react";
 import { DocType } from "./DocumentType";
+import { motion } from "framer-motion";
 
 export default function DocumentNode({ data }: { data: DocType }) {
   const [labelPositions, setLabelPositions] = useState<number[]>([]);
@@ -16,7 +17,11 @@ export default function DocumentNode({ data }: { data: DocType }) {
   }, [data.props]);
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: data.id * 0.15 }}
+    >
       <div
         id={`node-${data.name}`}
         className="min-w-45 bg-background border-2 border-onBackground rounded flex flex-col px-4 py-4"
@@ -50,6 +55,6 @@ export default function DocumentNode({ data }: { data: DocType }) {
         id="b"
         isConnectable={true}
       />
-    </>
+    </motion.div>
   );
 }

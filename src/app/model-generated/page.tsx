@@ -14,6 +14,7 @@ import {
   useEdgesState,
   addEdge,
   BackgroundVariant,
+  Panel,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import DocumentNode from "@/components/Nodes/DocumentNode";
@@ -29,54 +30,6 @@ const nodeTypes = {
 const edgeTypes = {
   customEdge: CustomEdge,
 };
-
-const initialNodes = [
-  {
-    id: "1",
-    type: "documentType",
-    position: { x: 0, y: 0 },
-    data: {
-      name: "Airline",
-      props: [
-        {
-          name: "id",
-          isReference: false,
-          isRelationship: false,
-          type: "string",
-        },
-        {
-          name: "name",
-          isReference: false,
-          isRelationship: false,
-          type: "string",
-        },
-        {
-          name: "aircrafts",
-          isReference: false,
-          isRelationship: true,
-          type: "Array<Aircraft>",
-        },
-      ],
-    },
-  },
-  {
-    id: "2",
-    type: "documentType",
-    position: { x: 10, y: 300 },
-    data: { name: "Aircraft", props: [{ name: "id", type: "string" }] },
-  },
-];
-const initialEdges = [
-  {
-    id: "e1-2",
-    source: "1",
-    sourceHandle: "0",
-    type: "customEdge",
-    target: "2",
-    animated: false,
-    style: { stroke: "#FF0000" },
-  },
-];
 
 const getLayoutedElements = (nodes, edges, options) => {
   const g = new Dagre.graphlib.Graph().setDefaultEdgeLabel(() => ({}));
@@ -128,7 +81,7 @@ export default function ModelGenerated() {
   const { metadataInfo } = useGlobalState();
 
   const makeGenerateModel = () => {
-    sendGenerateModel(metadataInfo).then((resp) => {
+    sendGenerateModel(metadataInfo).then(async (resp) => {
       if (resp.status !== 200) {
         alert("ERRO");
         return;
@@ -140,6 +93,7 @@ export default function ModelGenerated() {
 
       setNodes(inputNodes);
       setEdges(inputEdges);
+
       setLoading(false);
     });
   };
@@ -148,8 +102,8 @@ export default function ModelGenerated() {
     makeGenerateModel();
   }, []);
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const layout = useCallback(() => {
     const layouted = getLayoutedElements(nodes, edges, {
@@ -157,6 +111,10 @@ export default function ModelGenerated() {
     });
     setNodes([...layouted.nodes]);
   }, [nodes, edges]);
+
+  useEffect(() => {
+    layout();
+  }, [isLoading]);
 
   const onConnect = useCallback(
     (params) =>
@@ -166,10 +124,6 @@ export default function ModelGenerated() {
       }),
     [setEdges]
   );
-
-  useEffect(() => {
-    layout();
-  }, [isLoading]);
 
   return (
     <>
@@ -193,7 +147,13 @@ export default function ModelGenerated() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-          ></ReactFlow>
+          >
+
+            <Panel position="top-right">
+              <Button className="btn-secondary" text="Organizar" onClick={layout}/>
+            </Panel>
+
+          </ReactFlow>
 
           <div className="flex flex-row gap-5">
             <Link href={"/code-generated"} className="btn-primary w-1/12">
