@@ -1,3 +1,5 @@
+import { code } from "framer-motion/client";
+
 export type Relation = {
   source: string;
   target: string;
@@ -44,6 +46,22 @@ export type ModelDto = {
   explanation: string;
   tokens_used: number;
   models: JsonSchema[];
+};
+
+export const DefaultModelDto: ModelDto = {
+  explanation: "",
+  tokens_used: -1,
+  models: [],
+};
+
+export type GeneratedJavaCode = {
+  code: { [key: string]: string };
+  tokens_used: number;
+};
+
+export const DefaultGeneratedJavaCode: GeneratedJavaCode = {
+  code: {},
+  tokens_used: 0,
 };
 
 export type Response<T> = {

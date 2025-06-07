@@ -78,7 +78,7 @@ const measureNodes = (nodes) => {
 
 export default function ModelGenerated() {
   const [isLoading, setLoading] = useState<boolean>(true);
-  const { metadataInfo } = useGlobalState();
+  const { metadataInfo, setModelDto } = useGlobalState();
 
   const makeGenerateModel = () => {
     sendGenerateModel(metadataInfo).then(async (resp) => {
@@ -86,6 +86,8 @@ export default function ModelGenerated() {
         alert("ERRO");
         return;
       }
+
+      setModelDto(resp.data!!);
 
       const { nodes: inputNodes, edges: inputEdges } = mapModelDtoToNodes(
         resp.data!!
@@ -148,15 +150,17 @@ export default function ModelGenerated() {
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
           >
-
             <Panel position="top-right">
-              <Button className="btn-secondary" text="Organizar" onClick={layout}/>
+              <Button
+                className="btn-secondary"
+                text="Organizar"
+                onClick={layout}
+              />
             </Panel>
-
           </ReactFlow>
 
           <div className="flex flex-row gap-5">
-            <Link href={"/code-generated"} className="btn-primary w-1/12">
+            <Link href={"/code-generated"} className="btn-primary w-fit">
               Continuar
             </Link>
 

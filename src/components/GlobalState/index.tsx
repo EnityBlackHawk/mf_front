@@ -9,7 +9,14 @@ import {
   RdbAccess,
   DefaultRdbAccess,
 } from "@/services/MfApiObjects";
-import { DefaultMetadataInfo, MetadataInfo } from "@/services/MfApiResponses";
+import {
+  DefaultGeneratedJavaCode,
+  DefaultMetadataInfo,
+  DefaultModelDto,
+  GeneratedJavaCode,
+  MetadataInfo,
+  ModelDto,
+} from "@/services/MfApiResponses";
 import { pre } from "framer-motion/client";
 
 type Query = {
@@ -23,14 +30,24 @@ type Setter<T> = (param: T) => void;
 type GlobalStateContextType = {
   queries: Query[];
   setQueries: Setter<Query[]>;
+
   preferences: MigrationPreferences;
   setPreferences: Setter<MigrationPreferences>;
+
   llmConfig: LLM;
   setLlmConfig: Setter<LLM>;
+
   rdb: RdbAccess;
   setRdb: Setter<RdbAccess>;
+
   metadataInfo: MetadataInfo;
   setMetadataInfo: Setter<MetadataInfo>;
+
+  modelDto: ModelDto;
+  setModelDto: Setter<ModelDto>;
+
+  javaCode: GeneratedJavaCode;
+  setJavaCode: Setter<GeneratedJavaCode>;
 };
 
 const GlobalStateContext = createContext<GlobalStateContextType | undefined>(
@@ -54,6 +71,8 @@ export function GlobalStateProvider({
       llmConfig: DefaultLLM,
       rdb: DefaultRdbAccess,
       metadataInfo: DefaultMetadataInfo,
+      modelDto: DefaultModelDto,
+      javaCode: DefaultGeneratedJavaCode,
     };
   };
 
@@ -70,13 +89,23 @@ export function GlobalStateProvider({
   // Setters que atualizam diretamente o localStorage
   const setQueries = (queries: Query[]) =>
     saveStateToLocalStorage("queries", queries);
+
   const setPreferences = (preferences: MigrationPreferences) =>
     saveStateToLocalStorage("preferences", preferences);
+
   const setLlmConfig = (llmConfig: LLM) =>
     saveStateToLocalStorage("llmConfig", llmConfig);
+
   const setRdb = (rdb: RdbAccess) => saveStateToLocalStorage("rdb", rdb);
+
   const setMetadataInfo = (metadataInfo: MetadataInfo) =>
     saveStateToLocalStorage("metadataInfo", metadataInfo);
+
+  const setModelDto = (modelDto: ModelDto) =>
+    saveStateToLocalStorage("modelDto", modelDto);
+
+  const setJavaCode = (javaCode: GeneratedJavaCode) =>
+    saveStateToLocalStorage("javaCode", javaCode);
 
   return (
     <GlobalStateContext.Provider
@@ -91,6 +120,10 @@ export function GlobalStateProvider({
         setRdb,
         metadataInfo: initialState.metadataInfo,
         setMetadataInfo,
+        modelDto: initialState.modelDto,
+        setModelDto,
+        javaCode: initialState.javaCode,
+        setJavaCode,
       }}
     >
       {children}

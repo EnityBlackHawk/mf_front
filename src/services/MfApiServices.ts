@@ -2,6 +2,7 @@ import axios from "axios";
 import * as obj from "./MfApiObjects";
 import {
   AsyncResponse,
+  GeneratedJavaCode,
   MetadataInfo,
   ModelDto,
   Relation,
@@ -38,6 +39,22 @@ export async function GenerateModel(
 
   if (rest.status == 200) {
     return { status: rest.status, data: rest.data as ModelDto };
+  }
+
+  return { status: rest.status, message: rest.data.message };
+}
+
+export async function GenerateJavaCode(
+  modelDto: ModelDto
+): AsyncResponse<GeneratedJavaCode> {
+  const rest = await axios.post(
+    "http://localhost:8080/api/generateCode",
+    modelDto,
+    { validateStatus: () => true }
+  );
+
+  if (rest.status == 200) {
+    return { status: rest.status, data: rest.data as GeneratedJavaCode };
   }
 
   return { status: rest.status, message: rest.data.message };
