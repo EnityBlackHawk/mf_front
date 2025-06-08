@@ -49,7 +49,11 @@
 
   .main-input,
   input {
-    @apply p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-colors;
+    @apply p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-all duration-500 ease-in-out;
+  }
+
+  *:disabled {
+    opacity: 0.3;
   }
 
   h1 {

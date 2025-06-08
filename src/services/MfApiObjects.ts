@@ -49,3 +49,11 @@ export type Setup = {
   rdbAccess: RdbAccess;
   workloads: Array<Workload>;
 };
+
+export type MongoCredentials = {
+  host: string;
+  port: number;
+  database: string;
+  username?: string;
+  password?: string;
+};

@@ -59,3 +59,19 @@ export async function GenerateJavaCode(
 
   return { status: rest.status, message: rest.data.message };
 }
+
+export async function GetMongoCollections(
+  cred: obj.MongoCredentials
+): AsyncResponse<string[]> {
+  const rest = await axios.post(
+    "http://localhost:8080/api/utils/getMongoCollections",
+    cred,
+    { validateStatus: () => true }
+  );
+
+  if (rest.status == 200) {
+    return { status: rest.status, data: rest.data as string[] };
+  }
+
+  return { status: rest.status, message: rest.data.message };
+}
