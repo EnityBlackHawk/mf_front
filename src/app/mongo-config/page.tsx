@@ -1,11 +1,13 @@
 "use client";
 import Submit from "@/components/Submit";
-import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import { sendGetCollections } from "./service";
 import Button from "@/components/Button";
 import { AnimatePresence, motion } from "framer-motion";
 import ErrorCard from "@/components/ErrorCard";
+import { useGlobalState } from "@/components/GlobalState";
+import { useTransitionRouter } from "next-view-transitions";
+import pageAnimation from "@/services/NavAnimationDef";
 
 type State = {
   isError: boolean;
@@ -21,52 +23,66 @@ const initialState: State = {
   collections: [],
 };
 
-async function makeAction(state: State, formData: FormData): Promise<State> {
-  if (formData.get("disconnect")) {
-    return initialState;
-  }
+export default function MongoConfig() {
+  const { mongoCred, setMongoCred } = useGlobalState();
+  const router = useTransitionRouter();
 
-  if (state.isValid) {
-    return initialState;
-  }
+  async function makeAction(state: State, formData: FormData): Promise<State> {
+    if (formData.get("disconnect")) {
+      return initialState;
+    }
 
-  const resp = await sendGetCollections({
-    host: formData.get("host") as string,
-    port: parseInt(formData.get("port") as string),
-    username:
-      (formData.get("username") as string).length > 0
-        ? (formData.get("username") as string)
-        : undefined,
-    password:
-      (formData.get("password") as string).length > 0
-        ? (formData.get("password") as string)
-        : undefined,
-    database: formData.get("database") as string,
-  });
+    if (state.isValid) {
+      router.push("/migration", {
+        onTransitionReady: pageAnimation,
+      });
+      return initialState;
+    }
 
-  if (resp.status !== 200) {
+    const cred = {
+      host: formData.get("host") as string,
+      port: parseInt(formData.get("port") as string),
+      username:
+        (formData.get("username") as string).length > 0
+          ? (formData.get("username") as string)
+          : undefined,
+      password:
+        (formData.get("password") as string).length > 0
+          ? (formData.get("password") as string)
+          : undefined,
+      database: formData.get("database") as string,
+    };
+
+    const resp = await sendGetCollections(cred);
+
+    if (resp.status !== 200) {
+      return {
+        error: resp.message!!,
+        isValid: false,
+        collections: [],
+        isError: true,
+      };
+    }
+
+    setMongoCred(cred);
+
     return {
-      error: resp.message!!,
-      isValid: false,
-      collections: [],
-      isError: true,
+      error: "",
+      isValid: true,
+      collections: resp.data!!,
+      isError: false,
     };
   }
 
-  return { error: "", isValid: true, collections: resp.data!!, isError: false };
-}
-
-export default function MongoConfig() {
   const [existent, setExistent] = useState(false);
   const [state, formAction] = useActionState(makeAction, initialState);
 
   // State for input values
-  const [host, setHost] = useState("");
-  const [port, setPort] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [database, setDatabase] = useState("");
-  const [collection, setCollection] = useState("");
+  const [host, setHost] = useState(mongoCred.host);
+  const [port, setPort] = useState(mongoCred.port.toString());
+  const [username, setUsername] = useState(mongoCred.username);
+  const [password, setPassword] = useState(mongoCred.password);
+  const [database, setDatabase] = useState(mongoCred.database);
 
   return (
     <form

@@ -8,6 +8,8 @@ import {
   DefaultLLM,
   RdbAccess,
   DefaultRdbAccess,
+  MongoCredentials,
+  DefaultMongoCredentials,
 } from "@/services/MfApiObjects";
 import {
   DefaultGeneratedJavaCode,
@@ -48,6 +50,9 @@ type GlobalStateContextType = {
 
   javaCode: GeneratedJavaCode;
   setJavaCode: Setter<GeneratedJavaCode>;
+
+  mongoCred: MongoCredentials;
+  setMongoCred: Setter<MongoCredentials>;
 };
 
 const GlobalStateContext = createContext<GlobalStateContextType | undefined>(
@@ -73,6 +78,7 @@ export function GlobalStateProvider({
       metadataInfo: DefaultMetadataInfo,
       modelDto: DefaultModelDto,
       javaCode: DefaultGeneratedJavaCode,
+      mongoCred: DefaultMongoCredentials,
     };
   };
 
@@ -107,6 +113,9 @@ export function GlobalStateProvider({
   const setJavaCode = (javaCode: GeneratedJavaCode) =>
     saveStateToLocalStorage("javaCode", javaCode);
 
+  const setMongoCred = (mongoCred: MongoCredentials) =>
+    saveStateToLocalStorage("mongoCred", mongoCred);
+
   return (
     <GlobalStateContext.Provider
       value={{
@@ -124,6 +133,8 @@ export function GlobalStateProvider({
         setModelDto,
         javaCode: initialState.javaCode,
         setJavaCode,
+        mongoCred: initialState.mongoCred,
+        setMongoCred,
       }}
     >
       {children}

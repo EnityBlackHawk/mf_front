@@ -58,4 +58,9 @@ export type MongoCredentials = {
   password?: string;
 };
 
+export const DefaultMongoCredentials = {
+  host: "",
+  port: 0,
+  database: "",
+};
 
