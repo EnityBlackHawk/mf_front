@@ -26,6 +26,10 @@ async function makeAction(state: State, formData: FormData): Promise<State> {
     return initialState;
   }
 
+  if (state.isValid) {
+    return initialState;
+  }
+
   const resp = await sendGetCollections({
     host: formData.get("host") as string,
     port: parseInt(formData.get("port") as string),
@@ -122,68 +126,24 @@ export default function MongoConfig() {
             disabled={state.isValid}
           />
         </div>
-        <AnimatePresence>
-          {state.isValid && (
-            <motion.div
-              className="flex flex-col col-1 container gap-5"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex gap-3">
-                <input
-                  type="checkbox"
-                  checked={existent}
-                  onChange={() => setExistent(!existent)}
-                />
-                <p>Utilizar uma coleção já existente</p>
-              </div>
-
-              <div
-                className={`grid col-1 gap-2 w-full ${
-                  !existent ? "opacity-50" : ""
-                } `}
-              >
-                <label>Coleção</label>
-                <select
-                  className="p-2 border-2 border-onBackground rounded focus:border-ascent outline-none transition-all"
-                  disabled={!existent}
-                  name="collection"
-                  value={collection}
-                  onChange={(e) => setCollection(e.target.value)}
-                >
-                  {state.collections.map((x, i) => {
-                    return (
-                      <option key={i} className="text-black">
-                        {x}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       <div className="grow"></div>
       <AnimatePresence>
-        {state.isValid ||
-          (state.isError && (
-            <motion.div
-              className="w-1/3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <ErrorCard
-                message={state.isError ? state.error : "Conectado com sucesso!"}
-                isError={state.isError}
-              />
-            </motion.div>
-          ))}
+        {(state.isValid || state.isError) && (
+          <motion.div
+            className="w-1/3"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ErrorCard
+              message={state.isError ? state.error : "Conectado com sucesso!"}
+              isError={state.isError}
+            />
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <div className="flex gap-2">
