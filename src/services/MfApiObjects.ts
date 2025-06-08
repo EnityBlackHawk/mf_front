@@ -1,3 +1,5 @@
+import { GeneratedJavaCode } from "./MfApiResponses";
+
 export type RdbAccess = {
   /* JDBC host */
   host: string;
@@ -64,3 +66,12 @@ export const DefaultMongoCredentials = {
   database: "",
 };
 
+export type UpdateType = {
+  id: string;
+  message: string;
+};
+
+export type MigrateDto = {
+  generatedJavaCode: GeneratedJavaCode;
+  credentials: MongoCredentials;
+};

@@ -8,6 +8,7 @@ import {
   Relation,
   Response,
 } from "./MfApiResponses";
+import { fetchEventSource } from "@microsoft/fetch-event-source";
 
 export async function TryConnectRdb(rdbAccess: obj.RdbAccess) {
   return await axios.post(
@@ -74,4 +75,33 @@ export async function GetMongoCollections(
   }
 
   return { status: rest.status, message: rest.data.message };
+}
+
+export async function Migrate(
+  migrateDto: obj.MigrateDto,
+  callback: (message: string) => void
+) {
+  const setup = await axios.post(
+    "http://localhost:8080/api/migrate",
+    migrateDto,
+    { validateStatus: () => true }
+  );
+
+  if (setup.status !== 200) {
+    console.error("ERROR");
+    return;
+  }
+
+  const eventSource = new EventSource(
+    "http://localhost:8080/api/migrate-events"
+  );
+
+  eventSource.onmessage = (event) => {
+    callback(event.data);
+  };
+
+  eventSource.onerror = (err) => {
+    console.error("Error on SSE:", err);
+    eventSource.close();
+  };
 }
