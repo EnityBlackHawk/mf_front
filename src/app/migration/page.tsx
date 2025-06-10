@@ -6,11 +6,15 @@ import { useEffect, useState } from "react";
 import { sendMigration } from "./service";
 import { UpdateType } from "@/services/MfApiObjects";
 import Step from "@/components/Step";
+import { useTransitionRouter } from "next-view-transitions";
+import { motion } from "framer-motion";
 
 export default function Migration() {
   const { mongoCred, javaCode } = useGlobalState();
   const [compilation, setCompilation] = useState(false);
   const [steps, setSteps] = useState<string[]>([]);
+  const [completed, setCompleted] = useState(false);
+  const router = useTransitionRouter();
 
   const update = (update: UpdateType) => {
     if (update.id === "compile") {
@@ -19,7 +23,17 @@ export default function Migration() {
     }
 
     if (update.id == "conversion") {
-      setSteps([...steps, update.message]);
+      setSteps((prevSteps) => [...prevSteps, update.message]);
+      return;
+    }
+
+    if (update.id == "concluded") {
+      setCompleted(true);
+      return;
+    }
+
+    if (update.id == "report") {
+      //router.replace("https://google.com");
     }
   };
 
@@ -36,13 +50,21 @@ export default function Migration() {
         state={compilation ? "completed" : "running"}
       />
 
-      {steps.map((x) => {
-        return <Step text={x} state="completed" />;
+      {steps.map((x, i) => {
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: -15 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <Step key={i} text={x} state="completed" />
+          </motion.div>
+        );
       })}
 
       <Step
         text="Convertendo entidades"
-        state={compilation ? "running" : "waiting"}
+        state={compilation ? (completed ? "completed" : "running") : "waiting"}
       />
     </div>
   );
