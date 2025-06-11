@@ -10,10 +10,11 @@ import { useTransitionRouter } from "next-view-transitions";
 import { motion } from "framer-motion";
 
 export default function Migration() {
-  const { mongoCred, javaCode } = useGlobalState();
+  const { mongoCred, javaCode, setReport } = useGlobalState();
   const [compilation, setCompilation] = useState(false);
   const [steps, setSteps] = useState<string[]>([]);
   const [completed, setCompleted] = useState(false);
+  const [counter, setCounter] = useState(-1);
   const router = useTransitionRouter();
 
   const update = (update: UpdateType) => {
@@ -24,6 +25,8 @@ export default function Migration() {
 
     if (update.id == "conversion") {
       setSteps((prevSteps) => [...prevSteps, update.message]);
+      setCounter((c) => c + 1);
+      console.log(counter);
       return;
     }
 
@@ -33,7 +36,8 @@ export default function Migration() {
     }
 
     if (update.id == "report") {
-      //router.replace("https://google.com");
+      setReport(update.message);
+      router.replace("/completed");
     }
   };
 
@@ -57,7 +61,11 @@ export default function Migration() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <Step key={i} text={x} state="completed" />
+            <Step
+              key={i}
+              text={x}
+              state={i === counter ? "running" : "completed"}
+            />
           </motion.div>
         );
       })}

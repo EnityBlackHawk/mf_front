@@ -1,4 +1,5 @@
 import Loading from "../Loading";
+import { animate, motion } from "framer-motion";
 
 export default function Step({
   text,
@@ -12,7 +13,16 @@ export default function Step({
       {state !== "completed" && (
         <Loading className="w-6 h-6" waiting={state === "waiting"} />
       )}
-      {state === "completed" && <p className="text-xl text-ascent"></p>}
+      {state === "completed" && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="text-xl text-ascent"
+        >
+          
+        </motion.p>
+      )}
       <h2>{text}</h2>
     </div>
   );

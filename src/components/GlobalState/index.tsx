@@ -20,6 +20,7 @@ import {
   ModelDto,
 } from "@/services/MfApiResponses";
 import { pre } from "framer-motion/client";
+import { report } from "process";
 
 type Query = {
   id: number;
@@ -53,6 +54,9 @@ type GlobalStateContextType = {
 
   mongoCred: MongoCredentials;
   setMongoCred: Setter<MongoCredentials>;
+
+  report: string;
+  setReport: Setter<string>;
 };
 
 const GlobalStateContext = createContext<GlobalStateContextType | undefined>(
@@ -79,6 +83,7 @@ export function GlobalStateProvider({
       modelDto: DefaultModelDto,
       javaCode: DefaultGeneratedJavaCode,
       mongoCred: DefaultMongoCredentials,
+      report: "",
     };
   };
 
@@ -116,6 +121,9 @@ export function GlobalStateProvider({
   const setMongoCred = (mongoCred: MongoCredentials) =>
     saveStateToLocalStorage("mongoCred", mongoCred);
 
+  const setReport = (report: string) =>
+    saveStateToLocalStorage("report", report);
+
   return (
     <GlobalStateContext.Provider
       value={{
@@ -135,6 +143,8 @@ export function GlobalStateProvider({
         setJavaCode,
         mongoCred: initialState.mongoCred,
         setMongoCred,
+        report: initialState.report,
+        setReport,
       }}
     >
       {children}
