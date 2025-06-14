@@ -21,6 +21,7 @@ import {
 } from "@/services/MfApiResponses";
 import { pre } from "framer-motion/client";
 import { report } from "process";
+import dynamic from "next/dynamic";
 
 type Query = {
   id: number;
@@ -63,28 +64,26 @@ const GlobalStateContext = createContext<GlobalStateContextType | undefined>(
   undefined
 );
 
-export function GlobalStateProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function GlobalStateProviderBase({ children }: { children: React.ReactNode }) {
   // Função para carregar o estado inicial do localStorage
   const loadStateFromLocalStorage = () => {
-    const savedState = localStorage.getItem("globalState");
-    if (savedState) {
-      return JSON.parse(savedState);
+    if (typeof window !== "undefined") {
+      const savedState = localStorage.getItem("globalState");
+      if (savedState) {
+        return JSON.parse(savedState);
+      }
+      return {
+        queries: [],
+        preferences: DefaultMigrationPreferences,
+        llmConfig: DefaultLLM,
+        rdb: DefaultRdbAccess,
+        metadataInfo: DefaultMetadataInfo,
+        modelDto: DefaultModelDto,
+        javaCode: DefaultGeneratedJavaCode,
+        mongoCred: DefaultMongoCredentials,
+        report: "",
+      };
     }
-    return {
-      queries: [],
-      preferences: DefaultMigrationPreferences,
-      llmConfig: DefaultLLM,
-      rdb: DefaultRdbAccess,
-      metadataInfo: DefaultMetadataInfo,
-      modelDto: DefaultModelDto,
-      javaCode: DefaultGeneratedJavaCode,
-      mongoCred: DefaultMongoCredentials,
-      report: "",
-    };
   };
 
   // Estado inicial carregado do localStorage
@@ -92,9 +91,11 @@ export function GlobalStateProvider({
 
   // Função para salvar o estado no localStorage
   const saveStateToLocalStorage = (key: string, value: any) => {
-    const globalState = loadStateFromLocalStorage();
-    globalState[key] = value;
-    localStorage.setItem("globalState", JSON.stringify(globalState));
+    if (typeof window !== "undefined") {
+      const globalState = loadStateFromLocalStorage();
+      globalState[key] = value;
+      localStorage.setItem("globalState", JSON.stringify(globalState));
+    }
   };
 
   // Setters que atualizam diretamente o localStorage
@@ -159,3 +160,9 @@ export function useGlobalState() {
   }
   return context;
 }
+
+export const GlobalStateProvider = dynamic(
+  () => Promise.resolve(GlobalStateProviderBase),
+  { ssr: false }
+);
+

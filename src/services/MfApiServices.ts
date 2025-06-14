@@ -5,8 +5,6 @@ import {
   GeneratedJavaCode,
   MetadataInfo,
   ModelDto,
-  Relation,
-  Response,
 } from "./MfApiResponses";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 

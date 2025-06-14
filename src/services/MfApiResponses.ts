@@ -1,5 +1,3 @@
-import { code } from "framer-motion/client";
-
 export type Relation = {
   source: string;
   target: string;
